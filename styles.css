@@ -529,6 +529,30 @@ header {
     margin: 15px auto;
 }
 
+/* Añadir a styles.css */
+.separator-line {
+    width: 80px;
+    height: 2px;
+    background-color: var(--gold-primary);
+    margin: 15px auto;
+}
+
+.capture-container .museum-heading h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--gold-primary);
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.capture-container .museum-heading p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: #aaa;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
     .share-options {
