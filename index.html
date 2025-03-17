@@ -3,47 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Museo Musical de Spotify</title>
+    <title>Museo Musical de Spotify</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Tu Museo Musical</h1>
-            <p>Inicia sesión con Spotify para ver tu colección personalizada</p>
-        </header>
+    <div id="app">
+        <div id="login-container" class="centered">
+            <h1>Museo Musical de Spotify</h1>
+            <p>Visualiza tus álbumes favoritos como obras de arte en un museo virtual</p>
+            <button id="login-button" class="btn">Iniciar sesión con Spotify</button>
+        </div>
         
-        <main>
-            <div id="login-section" class="section">
-                <button id="login-button" class="spotify-button">
-                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/spotify.svg" alt="Spotify logo" class="spotify-icon">
-                    Iniciar sesión con Spotify
-                </button>
+        <div id="museum-container" class="hidden">
+            <div id="loading" class="centered">
+                <p>Cargando tu experiencia personalizada...</p>
+                <div class="spinner"></div>
             </div>
             
-            <div id="gallery-section" class="section hidden">
-                <div class="museum-frame">
-                    <div id="album-collage" class="collage-container"></div>
-                </div>
-                <div class="frame-info">
-                    <h2>Tus 10 artistas más escuchados</h2>
-                    <ul id="top-artists" class="artist-list"></ul>
-                    <button id="download-button" class="download-button">Descargar tu obra de arte</button>
-                </div>
-            </div>
+            <div id="museum-scene"></div>
             
-            <div id="loading-section" class="section hidden">
-                <div class="loading-spinner"></div>
-                <p>Creando tu obra de arte...</p>
+            <div id="info-panel">
+                <h2>Tus Artistas Favoritos</h2>
+                <ol id="top-artists"></ol>
+                <button id="download-button" class="btn">Descargar Obra de Arte</button>
+                <button id="logout-button" class="btn">Cerrar Sesión</button>
             </div>
-        </main>
-        
-        <footer>
-            <p>Esta aplicación utiliza la API de Spotify para crear una experiencia personalizada.</p>
-        </footer>
+        </div>
     </div>
-    
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script src="script.js"></script>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="spotify-auth.js"></script>
+    <script src="museum-scene.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
