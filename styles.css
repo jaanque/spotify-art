@@ -4,57 +4,124 @@
     box-sizing: border-box;
 }
 
+:root {
+    --primary-color: #1DB954;
+    --museum-dark: #1a1a1a;
+    --museum-light: #f5f5f5;
+    --gold-primary: #D4AF37;
+    --gold-light: #FFD700;
+    --gold-dark: #B8860B;
+    --gold-medium: #DAA520;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #222;
-    color: #ffffff;
+    font-family: 'Cormorant Garamond', 'Times New Roman', serif;
+    background-color: var(--museum-dark);
+    color: var(--museum-light);
     line-height: 1.6;
+    background-image: linear-gradient(to bottom, #222222, #1a1a1a);
+    background-attachment: fixed;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 40px 20px;
+    padding: 20px;
 }
 
+/* Header y navegación con estilo de museo */
+header {
+    background-color: rgba(10, 10, 10, 0.9);
+    border-bottom: 1px solid var(--gold-primary);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.museum-heading {
+    text-align: center;
+    margin: 20px auto 40px;
+    font-family: 'Playfair Display', serif;
+    position: relative;
+}
+
+.museum-heading h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    color: var(--gold-primary);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.museum-heading p {
+    color: #aaa;
+    font-style: italic;
+    font-size: 1.1rem;
+}
+
+.museum-heading::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 2px;
+    background-color: var(--gold-primary);
+    margin: 15px auto;
+}
+
+/* Login area */
 #login-container {
     text-align: center;
-    padding: 100px 0;
+    padding: 60px 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    margin: 40px auto;
+    max-width: 600px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
 }
 
 #login-container h1 {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     margin-bottom: 20px;
-    color: #1DB954;
+    color: var(--gold-primary);
+    font-family: 'Playfair Display', serif;
 }
 
 #login-button {
-    background-color: #1DB954;
-    color: white;
+    background-color: var(--gold-primary);
+    color: var(--museum-dark);
     border: none;
-    padding: 15px 30px;
+    padding: 12px 30px;
     font-size: 1rem;
-    border-radius: 30px;
+    border-radius: 3px;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
     margin-top: 20px;
+    font-family: 'Cormorant Garamond', serif;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 600;
 }
 
 #login-button:hover {
-    background-color: #1ed760;
+    background-color: var(--gold-light);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
 }
 
 .hidden {
     display: none;
 }
 
+/* User info section */
 .user-info {
     display: flex;
+    flex-direction: row;
     align-items: center;
     margin-bottom: 30px;
     padding: 20px;
-    background-color: rgba(40, 40, 40, 0.7);
-    border-radius: 10px;
+    background-color: rgba(20, 20, 20, 0.8);
+    border-radius: 5px;
+    border-left: 3px solid var(--gold-primary);
 }
 
 #user-image {
@@ -63,25 +130,61 @@ body {
     border-radius: 50%;
     object-fit: cover;
     margin-right: 20px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    border: 2px solid var(--gold-primary);
 }
 
 .user-details {
     flex-grow: 1;
 }
 
+.user-details h2 {
+    color: var(--gold-light);
+    margin-bottom: 5px;
+}
+
 #logout-button {
     background-color: transparent;
     color: #b3b3b3;
     border: 1px solid #b3b3b3;
-    padding: 10px 15px;
-    border-radius: 20px;
+    padding: 8px 15px;
+    border-radius: 3px;
     cursor: pointer;
     transition: all 0.3s;
+    font-family: 'Cormorant Garamond', serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
 }
 
 #logout-button:hover {
     color: white;
-    border-color: white;
+    border-color: var(--gold-primary);
+}
+
+/* Gallery frame section */
+.gallery-section {
+    padding: 20px 0 60px;
+}
+
+.gallery-intro {
+    text-align: center;
+    margin-bottom: 40px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gallery-intro h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--gold-primary);
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.gallery-intro p {
+    color: #ccc;
+    font-style: italic;
 }
 
 .frame-container {
@@ -90,75 +193,107 @@ body {
     align-items: center;
     margin: 20px auto;
     max-width: 100%;
+    padding: 10px;
+    position: relative;
 }
 
-/* Estilo del marco dorado ornamentado */
+/* Improved museum-style golden frame */
 .golden-frame {
     position: relative;
-    width: 90%;
+    width: 100%;
     max-width: 800px;
-    padding-top: 75%; /* Proporción 4:3 */
+    padding-top: 75%; /* 4:3 aspect ratio */
     margin: 0 auto;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="100" fill="none" stroke="%23D4AF37" stroke-width="10"/></svg>');
-    background-size: 100% 100%;
+    border: 22px solid transparent;
     box-shadow: 
-        0 0 0 15px #D4AF37,
-        0 0 0 16px #B8860B,
-        0 0 0 25px #DAA520,
-        0 0 30px rgba(0, 0, 0, 0.8);
-    border: 5px solid #FFD700;
-    border-radius: 3px;
-    z-index: 1;
+        0 0 0 1px var(--gold-dark),
+        0 0 20px rgba(0, 0, 0, 0.6);
     overflow: hidden;
+    background-color: #000;
+    border-image: linear-gradient(45deg, var(--gold-dark), var(--gold-primary), var(--gold-light), var(--gold-primary), var(--gold-dark)) 1;
 }
 
+/* Museum-style frame ornamentation */
 .golden-frame::before {
+    content: "";
+    position: absolute;
+    top: -22px;
+    left: -22px;
+    right: -22px;
+    bottom: -22px;
+    background: 
+        repeating-linear-gradient(45deg, 
+            var(--gold-dark), 
+            var(--gold-primary) 10px, 
+            var(--gold-medium) 20px, 
+            var(--gold-dark) 30px
+        );
+    z-index: -1;
+}
+
+/* Inner shadow for museum depth effect */
+.golden-frame::after {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: 
-        /* Esquinas del marco */
-        radial-gradient(circle at 0 0, #FFD700, transparent 20px),
-        radial-gradient(circle at 100% 0, #FFD700, transparent 20px),
-        radial-gradient(circle at 0 100%, #FFD700, transparent 20px),
-        radial-gradient(circle at 100% 100%, #FFD700, transparent 20px),
-        /* Patrones ornamentados */
-        repeating-linear-gradient(45deg, #D4AF37, #FFD700 10px, #DAA520 20px, #D4AF37 30px);
-    opacity: 0.4;
-    z-index: 2;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8);
     pointer-events: none;
+    z-index: 10;
 }
 
+/* Album covers collage area */
 .covers-collage {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    bottom: 10px;
-    background-color: #F5F5DC; /* Color de fondo para simular un lienzo */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #0a0a0a;
+    background-image: 
+        linear-gradient(rgba(20, 20, 20, 0.8), rgba(0, 0, 0, 0.9)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" fill="%23111" /></svg>');
     overflow: hidden;
-    z-index: 1;
 }
 
+/* Individual album covers */
 .cover-item {
     position: absolute;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, z-index 0.1s;
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    z-index: 1;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7), 0 0 3px var(--gold-dark);
+    transition: transform 0.4s ease, z-index 0.2s;
     transform-origin: center;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .cover-item:hover {
-    transform: scale(1.1) rotate(0deg) !important;
-    z-index: 100 !important;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+    transform: scale(1.15) rotate(0deg) !important;
+    z-index: 1000 !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(212, 175, 55, 0.7);
 }
 
-/* Estilos para los elementos cargando */
+/* Museum-style caption for each cover */
+.cover-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 8px;
+    font-size: 12px;
+    text-align: center;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.cover-item:hover .cover-caption {
+    transform: translateY(0);
+}
+
+/* Loading effect */
 .loading-container {
     position: absolute;
     top: 0;
@@ -166,115 +301,119 @@ body {
     right: 0;
     bottom: 0;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: rgba(0, 0, 0, 0.7);
+    background-color: rgba(10, 10, 10, 0.9);
     z-index: 999;
 }
 
 .loading-spinner {
     width: 50px;
     height: 50px;
-    border: 5px solid rgba(255, 255, 255, 0.3);
+    border: 4px solid rgba(212, 175, 55, 0.3);
     border-radius: 50%;
-    border-top-color: #1DB954;
-    animation: spin 1s ease-in-out infinite;
+    border-top-color: var(--gold-primary);
+    animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
 }
 
-/* Estilos específicos para el marco dorado ornamentado */
-.frame-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;
-    max-width: 100%;
-    padding: 20px;
+.loading-text {
+    color: var(--gold-primary);
+    margin-top: 15px;
+    font-style: italic;
+    letter-spacing: 1px;
 }
 
-.golden-frame {
-    position: relative;
-    width: 90%;
-    max-width: 800px;
-    padding-top: 75%; /* Proporción 4:3 como en la imagen */
-    margin: 0 auto;
-    border: 20px solid transparent;
-    border-image: linear-gradient(to bottom right, #FFD700, #B8860B, #DAA520, #CD853F, #D4AF37) 1;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    background-color: #000;
+/* Museum information placards */
+.museum-placard {
+    background-color: #0a0a0a;
+    padding: 15px;
+    border-left: 3px solid var(--gold-primary);
+    margin: 30px 0;
+    font-family: 'Cormorant Garamond', serif;
 }
 
-/* Efecto de ornamentación para el marco */
-.golden-frame::before {
-    content: "";
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    right: -20px;
-    bottom: -20px;
-    background: 
-        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0,0 C30,10 70,10 100,0 C90,30 90,70 100,100 C70,90 30,90 0,100 C10,70 10,30 0,0 Z" fill="%23D4AF37"/></svg>') 0 0/100% 100%,
-        linear-gradient(45deg, #D4AF37, #FFD700, #B8860B, #DAA520);
-    z-index: -1;
+.museum-placard h3 {
+    color: var(--gold-primary);
+    font-size: 1.3rem;
+    margin-bottom: 8px;
 }
 
-/* Efecto de textura para el marco */
-.golden-frame::after {
-    content: "";
-    position: absolute;
-    top: -20px;
-    left: -20px;
-    right: -20px;
-    bottom: -20px;
-    background: 
-        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="%23D4AF37" stroke-width="0.5"/></svg>') 0 0/10px 10px repeat,
-        radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.3), rgba(184, 134, 11, 0.3));
-    z-index: -2;
+.museum-placard p {
+    color: #ddd;
+    font-size: 1rem;
+    line-height: 1.5;
 }
 
-/* Contenedor de las portadas */
-.covers-collage {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #000;
-    overflow: hidden;
+/* Responsive adjustments for mobile */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .museum-heading h1 {
+        font-size: 1.8rem;
+    }
+    
+    .user-info {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    #user-image {
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+    
+    .golden-frame {
+        padding-top: 100%; /* Square aspect ratio on mobile */
+        border-width: 15px;
+    }
+    
+    .golden-frame::before {
+        top: -15px;
+        left: -15px;
+        right: -15px;
+        bottom: -15px;
+    }
+    
+    .cover-item:hover {
+        transform: scale(1.1) rotate(0deg) !important;
+    }
+    
+    .gallery-intro h2 {
+        font-size: 1.5rem;
+    }
 }
 
-/* Estilo para cada portada */
-.cover-item {
-    position: absolute;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease, z-index 0.2s;
-    transform-origin: center;
-    overflow: hidden;
-    cursor: pointer;
+/* Super small screens */
+@media screen and (max-width: 480px) {
+    .museum-heading h1 {
+        font-size: 1.5rem;
+    }
+    
+    #login-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+    
+    .golden-frame {
+        border-width: 10px;
+    }
+    
+    .golden-frame::before {
+        top: -10px;
+        left: -10px;
+        right: -10px;
+        bottom: -10px;
+    }
 }
 
-.cover-item:hover {
-    transform: scale(1.2) rotate(0deg) !important;
-    z-index: 1000 !important;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
-}
-
-/* Efecto de superposición para claridad */
-.cover-item::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.2);
-    transition: background 0.3s ease;
-}
-
-.cover-item:hover::after {
-    background: rgba(0, 0, 0, 0);
-}
-
+/* Animation */
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Font imports */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&display=swap');
