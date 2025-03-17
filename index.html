@@ -3,79 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Explora tu Planeta Musical</title>
+    <title>Tu Museo Musical de Spotify</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
 </head>
 <body>
-    <div id="stars"></div>
-    <div id="loading" class="hidden">
-        <div class="spinner"></div>
-        <p>Generando tu planeta musical...</p>
+    <div class="container">
+        <header>
+            <h1>Tu Museo Musical</h1>
+            <p>Inicia sesión con Spotify para ver tu colección personalizada</p>
+        </header>
+        
+        <main>
+            <div id="login-section" class="section">
+                <button id="login-button" class="spotify-button">
+                    <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/spotify.svg" alt="Spotify logo" class="spotify-icon">
+                    Iniciar sesión con Spotify
+                </button>
+            </div>
+            
+            <div id="gallery-section" class="section hidden">
+                <div class="museum-frame">
+                    <div id="album-collage" class="collage-container"></div>
+                </div>
+                <div class="frame-info">
+                    <h2>Tus 10 artistas más escuchados</h2>
+                    <ul id="top-artists" class="artist-list"></ul>
+                    <button id="download-button" class="download-button">Descargar tu obra de arte</button>
+                </div>
+            </div>
+            
+            <div id="loading-section" class="section hidden">
+                <div class="loading-spinner"></div>
+                <p>Creando tu obra de arte...</p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Esta aplicación utiliza la API de Spotify para crear una experiencia personalizada.</p>
+        </footer>
     </div>
-
-    <header>
-        <h1>Explora tu Planeta Musical</h1>
-        <div id="user-profile" class="hidden">
-            <img id="user-image" src="" alt="Foto de perfil">
-            <span id="user-name"></span>
-            <button id="logout-btn">Cerrar Sesión</button>
-        </div>
-    </header>
-
-    <main>
-        <div id="login-container">
-            <p>Conecta con Spotify para descubrir tu planeta musical personalizado basado en tus verdaderos hábitos de escucha.</p>
-            <button id="login-btn" class="spotify-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24">
-                    <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.8-.179-.92-.6-.12-.418.18-.8.6-.9C10.5 13.97 14.4 14.4 17.64 16.44c.36.219.48.66.24 1.021zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.24 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
-                </svg>
-                Iniciar sesión con Spotify
-            </button>
-        </div>
-
-        <div id="planet-container" class="hidden">
-            <div id="planet-scene"></div>
-            <div class="controls">
-                <button id="share-btn">Compartir mi planeta</button>
-            </div>
-        </div>
-
-        <div id="music-data" class="hidden">
-            <div class="section">
-                <h2>Tus Artistas Más Escuchados</h2>
-                <ul id="top-artists"></ul>
-            </div>
-            <div class="section">
-                <h2>Tus Canciones Favoritas</h2>
-                <ul id="top-tracks"></ul>
-            </div>
-        </div>
-    </main>
-
-    <div id="share-modal" class="modal hidden">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>¡Comparte tu Planeta Musical!</h2>
-            <div id="planet-image-container">
-                <canvas id="planet-snapshot"></canvas>
-                <div class="watermark">exploraturplanetamusical.com</div>
-            </div>
-            <div class="share-buttons">
-                <button id="download-btn">Descargar imagen</button>
-                <button id="twitter-share">Compartir en Twitter</button>
-                <button id="facebook-share">Compartir en Facebook</button>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <p>© 2025 Explora tu Planeta Musical | Potenciado por la API oficial de Spotify</p>
-    </footer>
-
-    <script src="spotify-auth.js"></script>
-    <script src="planet-generator.js"></script>
-    <script src="app.js"></script>
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
