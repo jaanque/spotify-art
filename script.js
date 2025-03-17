@@ -39,6 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Eventos
     loginButton.addEventListener('click', authenticateWithSpotify);
     logoutButton.addEventListener('click', logout);
+    
+    // Evento para el botón de compartir (se crea dinámicamente)
+    document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'share-button') {
+            captureAndShare();
+        }
+    });
 });
 
 // Autenticación con Spotify
@@ -205,6 +212,9 @@ async function loadAllCovers() {
         // Crear el collage de portadas
         createCollage();
         
+        // Añadir botón de compartir
+        addShareButton();
+        
     } catch (error) {
         console.error('Error cargando portadas:', error);
         showError('Error al cargar tus portadas de Spotify. Por favor, intenta de nuevo.');
@@ -264,5 +274,238 @@ function createCollage() {
             // Aquí podrías abrir la canción/álbum/artista en Spotify
             // Por ejemplo, usando window.open() si tienes la URL de Spotify
         });
+    }
+    
+    // Añadir marca de agua "nam3.es"
+    const watermark = document.createElement('div');
+    watermark.className = 'watermark';
+    watermark.textContent = 'nam3.es';
+    coversCollage.appendChild(watermark);
+}
+
+// Añadir botón de compartir
+function addShareButton() {
+    // Verificar si ya existe el botón
+    if (document.getElementById('share-button')) {
+        return;
+    }
+    
+    const frameContainer = document.querySelector('.frame-container');
+    
+    const shareButton = document.createElement('button');
+    shareButton.id = 'share-button';
+    shareButton.className = 'share-button';
+    shareButton.innerHTML = '<span class="share-icon">&#x1F4E2;</span> Compartir';
+    
+    frameContainer.appendChild(shareButton);
+}
+
+// Capturar y compartir la imagen
+async function captureAndShare() {
+    try {
+        // Cargar html2canvas dinámicamente si no está disponible
+        if (typeof html2canvas === 'undefined') {
+            await loadScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+        }
+        
+        // Mostrar indicador de carga
+        const shareButton = document.getElementById('share-button');
+        const originalText = shareButton.innerHTML;
+        shareButton.innerHTML = 'Capturando...';
+        shareButton.disabled = true;
+        
+        // Elemento a capturar (el marco dorado con el collage)
+        const frameElement = document.querySelector('.golden-frame');
+        
+        // Capturar con html2canvas
+        const canvas = await html2canvas(frameElement, {
+            allowTaint: true,
+            useCORS: true,
+            backgroundColor: null
+        });
+        
+        // Convertir a imagen
+        const imageData = canvas.toDataURL('image/png');
+        
+        // Restaurar botón
+        shareButton.innerHTML = originalText;
+        shareButton.disabled = false;
+        
+        // Mostrar opciones de compartir
+        showShareOptions(imageData);
+        
+    } catch (error) {
+        console.error('Error al capturar la imagen:', error);
+        alert('No se pudo capturar la imagen. Por favor, intenta de nuevo.');
+        
+        // Restaurar botón en caso de error
+        const shareButton = document.getElementById('share-button');
+        if (shareButton) {
+            shareButton.innerHTML = '<span class="share-icon">&#x1F4E2;</span> Compartir';
+            shareButton.disabled = false;
+        }
+    }
+}
+
+// Cargar script externo
+function loadScript(src) {
+    return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// Mostrar opciones para compartir
+function showShareOptions(imageData) {
+    // Crear modal para opciones de compartir
+    const modal = document.createElement('div');
+    modal.className = 'share-modal';
+    
+    const modalContent = document.createElement('div');
+    modalContent.className = 'share-modal-content';
+    
+    // Título
+    const title = document.createElement('h3');
+    title.textContent = 'Compartir en redes sociales';
+    
+    // Vista previa de la imagen
+    const preview = document.createElement('div');
+    preview.className = 'image-preview';
+    const previewImg = document.createElement('img');
+    previewImg.src = imageData;
+    previewImg.alt = 'Vista previa';
+    preview.appendChild(previewImg);
+    
+    // Opciones de compartir
+    const shareOptions = document.createElement('div');
+    shareOptions.className = 'share-options';
+    
+    // Botones para redes sociales
+    const facebookBtn = createSocialButton('Facebook', 'facebook', imageData);
+    const twitterBtn = createSocialButton('Twitter', 'twitter', imageData);
+    const instagramBtn = createSocialButton('Instagram', 'instagram', imageData);
+    const whatsappBtn = createSocialButton('WhatsApp', 'whatsapp', imageData);
+    
+    // Opción de descarga
+    const downloadBtn = document.createElement('button');
+    downloadBtn.className = 'share-option-btn download-btn';
+    downloadBtn.textContent = 'Descargar imagen';
+    downloadBtn.addEventListener('click', () => {
+        // Crear enlace de descarga
+        const link = document.createElement('a');
+        link.href = imageData;
+        link.download = 'mi-spotify-nam3es.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Cerrar modal después de descargar
+        closeModal();
+    });
+    
+    // Botón de cerrar
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'close-btn';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', closeModal);
+    
+    // Añadir elementos al modal
+    shareOptions.appendChild(facebookBtn);
+    shareOptions.appendChild(twitterBtn);
+    shareOptions.appendChild(instagramBtn);
+    shareOptions.appendChild(whatsappBtn);
+    shareOptions.appendChild(downloadBtn);
+    
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(title);
+    modalContent.appendChild(preview);
+    modalContent.appendChild(shareOptions);
+    
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+    
+    // Función para cerrar el modal
+    function closeModal() {
+        document.body.removeChild(modal);
+    }
+    
+    // Cerrar modal al hacer clic fuera del contenido
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+}
+
+// Crear botón para compartir en red social
+function createSocialButton(name, platform, imageData) {
+    const button = document.createElement('button');
+    button.className = `share-option-btn ${platform}-btn`;
+    button.textContent = name;
+    
+    button.addEventListener('click', () => {
+        shareOnPlatform(platform, imageData);
+    });
+    
+    return button;
+}
+
+// Compartir en diferentes plataformas
+function shareOnPlatform(platform, imageData) {
+    // Texto para compartir
+    const shareText = 'Mira mi colección de Spotify en marco artístico';
+    const shareUrl = window.location.href;
+    
+    // Opciones según la plataforma
+    switch (platform) {
+        case 'facebook':
+            // Facebook no permite compartir imágenes directamente desde JavaScript
+            // Mejor opción: Usar Facebook API o abrir diálogo de compartir
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+            break;
+            
+        case 'twitter':
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+            break;
+            
+        case 'instagram':
+            // Instagram no tiene una API web para compartir directamente
+            alert('Para compartir en Instagram:\n1. Descarga la imagen\n2. Ábrela en la app de Instagram');
+            break;
+            
+        case 'whatsapp':
+            window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`, '_blank');
+            break;
+    }
+}
+
+// Función para verificar Web Share API
+function canUseWebShare() {
+    return navigator.share !== undefined;
+}
+
+// Usar Web Share API si está disponible
+async function useWebShare(imageData) {
+    try {
+        // Convertir base64 a blob
+        const blob = await (await fetch(imageData)).blob();
+        
+        // Crear archivo para compartir
+        const file = new File([blob], 'spotify-collection.png', { type: 'image/png' });
+        
+        // Usar Web Share API
+        await navigator.share({
+            title: 'Mi colección de Spotify',
+            text: 'Mira mi colección de Spotify en marco artístico',
+            files: [file]
+        });
+        
+        return true;
+    } catch (error) {
+        console.error('Error al compartir:', error);
+        return false;
     }
 }
