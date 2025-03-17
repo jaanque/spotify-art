@@ -2,128 +2,279 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', sans-serif;
 }
 
 body {
-    background-color: #121212;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #222;
     color: #ffffff;
-    overflow: hidden;
+    line-height: 1.6;
 }
 
-#app {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-}
-
-.centered {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    text-align: center;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
 }
 
 #login-container {
-    padding: 2rem;
+    text-align: center;
+    padding: 100px 0;
 }
 
 #login-container h1 {
     font-size: 2.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 20px;
     color: #1DB954;
 }
 
-#login-container p {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
-    max-width: 600px;
-}
-
-.btn {
+#login-button {
     background-color: #1DB954;
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 30px;
+    padding: 15px 30px;
     font-size: 1rem;
-    font-weight: bold;
+    border-radius: 30px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s;
+    margin-top: 20px;
 }
 
-.btn:hover {
+#login-button:hover {
     background-color: #1ed760;
-    transform: scale(1.05);
-}
-
-#museum-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-#museum-scene {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-#info-panel {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    border-radius: 10px;
-    max-width: 300px;
-    z-index: 100;
-}
-
-#info-panel h2 {
-    color: #1DB954;
-    margin-bottom: 10px;
-}
-
-#top-artists {
-    margin-left: 20px;
-    margin-bottom: 20px;
-}
-
-#top-artists li {
-    margin-bottom: 5px;
 }
 
 .hidden {
     display: none;
 }
 
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid rgba(255, 255, 255, 0.3);
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: rgba(40, 40, 40, 0.7);
+    border-radius: 10px;
+}
+
+#user-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.user-details {
+    flex-grow: 1;
+}
+
+#logout-button {
+    background-color: transparent;
+    color: #b3b3b3;
+    border: 1px solid #b3b3b3;
+    padding: 10px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#logout-button:hover {
+    color: white;
+    border-color: white;
+}
+
+.frame-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+    max-width: 100%;
+}
+
+/* Estilo del marco dorado ornamentado */
+.golden-frame {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    padding-top: 75%; /* Proporción 4:3 */
+    margin: 0 auto;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="0" y="0" width="100" height="100" fill="none" stroke="%23D4AF37" stroke-width="10"/></svg>');
+    background-size: 100% 100%;
+    box-shadow: 
+        0 0 0 15px #D4AF37,
+        0 0 0 16px #B8860B,
+        0 0 0 25px #DAA520,
+        0 0 30px rgba(0, 0, 0, 0.8);
+    border: 5px solid #FFD700;
+    border-radius: 3px;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.golden-frame::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        /* Esquinas del marco */
+        radial-gradient(circle at 0 0, #FFD700, transparent 20px),
+        radial-gradient(circle at 100% 0, #FFD700, transparent 20px),
+        radial-gradient(circle at 0 100%, #FFD700, transparent 20px),
+        radial-gradient(circle at 100% 100%, #FFD700, transparent 20px),
+        /* Patrones ornamentados */
+        repeating-linear-gradient(45deg, #D4AF37, #FFD700 10px, #DAA520 20px, #D4AF37 30px);
+    opacity: 0.4;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.covers-collage {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background-color: #F5F5DC; /* Color de fondo para simular un lienzo */
+    overflow: hidden;
+    z-index: 1;
+}
+
+.cover-item {
+    position: absolute;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s ease, z-index 0.1s;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    z-index: 1;
+    transform-origin: center;
+}
+
+.cover-item:hover {
+    transform: scale(1.1) rotate(0deg) !important;
+    z-index: 100 !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Estilos para los elementos cargando */
+.loading-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 999;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     border-top-color: #1DB954;
     animation: spin 1s ease-in-out infinite;
+}
+
+/* Estilos específicos para el marco dorado ornamentado */
+.frame-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin: 20px auto;
+    max-width: 100%;
+    padding: 20px;
+}
+
+.golden-frame {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    padding-top: 75%; /* Proporción 4:3 como en la imagen */
+    margin: 0 auto;
+    border: 20px solid transparent;
+    border-image: linear-gradient(to bottom right, #FFD700, #B8860B, #DAA520, #CD853F, #D4AF37) 1;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    background-color: #000;
+}
+
+/* Efecto de ornamentación para el marco */
+.golden-frame::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M0,0 C30,10 70,10 100,0 C90,30 90,70 100,100 C70,90 30,90 0,100 C10,70 10,30 0,0 Z" fill="%23D4AF37"/></svg>') 0 0/100% 100%,
+        linear-gradient(45deg, #D4AF37, #FFD700, #B8860B, #DAA520);
+    z-index: -1;
+}
+
+/* Efecto de textura para el marco */
+.golden-frame::after {
+    content: "";
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: 
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="none" stroke="%23D4AF37" stroke-width="0.5"/></svg>') 0 0/10px 10px repeat,
+        radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.3), rgba(184, 134, 11, 0.3));
+    z-index: -2;
+}
+
+/* Contenedor de las portadas */
+.covers-collage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #000;
+    overflow: hidden;
+}
+
+/* Estilo para cada portada */
+.cover-item {
+    position: absolute;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.3s ease, z-index 0.2s;
+    transform-origin: center;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.cover-item:hover {
+    transform: scale(1.2) rotate(0deg) !important;
+    z-index: 1000 !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Efecto de superposición para claridad */
+.cover-item::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+}
+
+.cover-item:hover::after {
+    background: rgba(0, 0, 0, 0);
 }
 
 @keyframes spin {
     to { transform: rotate(360deg); }
-}
-
-/* Instrucciones para móviles */
-#museum-instructions {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 10px;
-    border-radius: 10px;
-    z-index: 100;
-    font-size: 0.8rem;
 }

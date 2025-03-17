@@ -3,40 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Museo Musical de Spotify</title>
+    <title>Spotify en Marco Dorado</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <div id="login-container" class="centered">
-            <h1>Museo Musical de Spotify</h1>
-            <p>Visualiza tus álbumes favoritos como obras de arte en un museo virtual</p>
-            <button id="login-button" class="btn">Iniciar sesión con Spotify</button>
+    <div class="container">
+        <div id="login-container">
+            <h1>Tu Colección de Spotify</h1>
+            <p>Visualiza tus favoritos en un marco artístico</p>
+            <button id="login-button">Iniciar sesión con Spotify</button>
         </div>
-        
-        <div id="museum-container" class="hidden">
-            <div id="loading" class="centered">
-                <p>Cargando tu experiencia personalizada...</p>
-                <div class="spinner"></div>
+
+        <div id="content-container" class="hidden">
+            <div class="user-info">
+                <img id="user-image" src="" alt="Profile Picture">
+                <div class="user-details">
+                    <h2 id="user-name"></h2>
+                    <p id="user-email"></p>
+                </div>
+                <button id="logout-button">Cerrar sesión</button>
             </div>
-            
-            <div id="museum-scene"></div>
-            
-            <div id="info-panel">
-                <h2>Tus Artistas Favoritos</h2>
-                <ol id="top-artists"></ol>
-                <button id="download-button" class="btn">Descargar Obra de Arte</button>
-                <button id="logout-button" class="btn">Cerrar Sesión</button>
+
+            <div class="frame-container">
+                <div class="golden-frame">
+                    <div id="covers-collage" class="covers-collage"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="spotify-auth.js"></script>
-    <script src="museum-scene.js"></script>
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
