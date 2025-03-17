@@ -494,6 +494,41 @@ header {
     font-style: italic;
 }
 
+/* Agregar esto a styles.css */
+
+.capture-container {
+    background-color: var(--museum-dark);
+    color: var(--museum-light);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+}
+
+.capture-container .museum-heading h1 {
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+    color: var(--gold-primary);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+}
+
+.capture-container .museum-heading p {
+    color: #aaa;
+    font-style: italic;
+    font-size: 1.1rem;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.capture-container .museum-heading::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 2px;
+    background-color: var(--gold-primary);
+    margin: 15px auto;
+}
+
 /* Responsivo */
 @media (max-width: 768px) {
     .share-options {

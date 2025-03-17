@@ -301,6 +301,8 @@ function addShareButton() {
 }
 
 // Capturar y compartir la imagen
+// En script.js, modifica la función captureAndShare():
+
 async function captureAndShare() {
     try {
         // Cargar html2canvas dinámicamente si no está disponible
@@ -314,15 +316,47 @@ async function captureAndShare() {
         shareButton.innerHTML = 'Capturando...';
         shareButton.disabled = true;
         
-        // Elemento a capturar (el marco dorado con el collage)
-        const frameElement = document.querySelector('.golden-frame');
+        // Crear un contenedor temporal para la captura que incluya el título
+        const captureContainer = document.createElement('div');
+        captureContainer.className = 'capture-container';
+        captureContainer.style.position = 'relative';
+        captureContainer.style.width = document.querySelector('.golden-frame').offsetWidth + 'px';
+        captureContainer.style.margin = '0 auto';
+        captureContainer.style.backgroundColor = '#1a1a1a';
+        captureContainer.style.padding = '20px';
+        
+        // Añadir título de museo
+        const museumTitle = document.createElement('div');
+        museumTitle.className = 'museum-heading';
+        museumTitle.innerHTML = '<h1>Museo de Spotify</h1><p>Mi colección personal</p>';
+        museumTitle.style.textAlign = 'center';
+        museumTitle.style.marginBottom = '30px';
+        
+        // Clonar el marco dorado
+        const frameClone = document.querySelector('.golden-frame').cloneNode(true);
+        
+        // Añadir elementos al contenedor temporal
+        captureContainer.appendChild(museumTitle);
+        captureContainer.appendChild(frameClone);
+        
+        // Añadir el contenedor temporal al DOM temporalmente
+        document.body.appendChild(captureContainer);
+        
+        // Ajustar estilos para que sea visible pero no afecte al layout
+        captureContainer.style.position = 'fixed';
+        captureContainer.style.left = '-9999px';
+        captureContainer.style.top = 0;
+        captureContainer.style.zIndex = '-1';
         
         // Capturar con html2canvas
-        const canvas = await html2canvas(frameElement, {
+        const canvas = await html2canvas(captureContainer, {
             allowTaint: true,
             useCORS: true,
-            backgroundColor: null
+            backgroundColor: '#1a1a1a'
         });
+        
+        // Eliminar el contenedor temporal
+        document.body.removeChild(captureContainer);
         
         // Convertir a imagen
         const imageData = canvas.toDataURL('image/png');
