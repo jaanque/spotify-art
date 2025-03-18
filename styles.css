@@ -512,3 +512,111 @@ footer {
         font-size: 1.8rem;
     }
 }
+
+/* Añadir estos estilos en styles.css */
+
+/* Estilos para el botón de compartir */
+.share-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.share-button:hover {
+    transform: translateY(-3px);
+    background-color: var(--primary-hover);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.share-button:active {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.share-button svg {
+    width: 24px;
+    height: 24px;
+}
+
+/* Mejorar la visibilidad en diferentes fondos */
+.share-button::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    z-index: -1;
+}
+
+/* Adaptaciones para dispositivos móviles */
+@media (max-width: 768px) {
+    .share-button {
+        bottom: 15px;
+        right: 15px;
+        width: 60px;
+        height: 60px;
+    }
+    
+    .share-button svg {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .share-button {
+        bottom: 15px;
+        right: 15px;
+        width: 55px;
+        height: 55px;
+    }
+}
+
+/* Estilos para el mensaje de "Compartir" que aparece al mantener presionado en móviles */
+.share-button::after {
+    content: 'Compartir';
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: var(--dark-text);
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 3px 8px;
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.share-button:hover::after {
+    opacity: 1;
+}
+
+/* Estilos para el tooltip en dispositivos móviles (solo aparece al tocar) */
+@media (max-width: 768px) {
+    .share-button::after {
+        opacity: 0;
+    }
+    
+    .share-button:active::after {
+        opacity: 1;
+    }
+}

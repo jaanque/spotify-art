@@ -421,3 +421,73 @@ function resetCanvas() {
     // Reset hover state
     hoveredParticle = null;
 }
+
+// Añadir esta función al final de artwork-generator.js
+
+// Función para capturar y compartir el canvas
+function captureAndShare() {
+    // Mostrar una animación de carga mientras se captura
+    document.querySelector('.loading-animation').classList.remove('hidden');
+    document.querySelector('.loading-animation p').textContent = 'Preparando imagen para compartir...';
+    
+    // Esperar un momento para que la animación se muestre
+    setTimeout(() => {
+        try {
+            // Capturar solo el contenido del canvas
+            const dataUrl = canvas.toDataURL('image/png');
+            
+            // Convertir el dataURL a Blob para compartir
+            fetch(dataUrl)
+                .then(res => res.blob())
+                .then(blob => {
+                    // Crear un objeto de archivo
+                    const file = new File([blob], 'mi-musica-flow.png', { type: 'image/png' });
+                    
+                    // Verificar si el navegador soporta la API de compartir
+                    if (navigator.share) {
+                        navigator.share({
+                            title: 'Mi Música Flow',
+                            text: 'Mira mi colección de música visualizada como una galería de arte',
+                            files: [file]
+                        }).catch(error => {
+                            console.error('Error al compartir:', error);
+                            fallbackShare(dataUrl);
+                        }).finally(() => {
+                            document.querySelector('.loading-animation').classList.add('hidden');
+                        });
+                    } else {
+                        fallbackShare(dataUrl);
+                        document.querySelector('.loading-animation').classList.add('hidden');
+                    }
+                });
+        } catch (error) {
+            console.error('Error al capturar el canvas:', error);
+            document.querySelector('.loading-animation').classList.add('hidden');
+            alert('No se pudo compartir la imagen. Inténtalo de nuevo.');
+        }
+    }, 300);
+}
+
+// Función de respaldo para navegadores que no soportan la API de compartir
+function fallbackShare(dataUrl) {
+    // Crear un elemento ancla
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = 'mi-musica-flow.png';
+    
+    // Simular click para descargar
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Notificar al usuario
+    alert('La imagen se ha descargado. Puedes compartirla manualmente.');
+}
+
+// Agregar event listener al botón de compartir
+document.addEventListener('DOMContentLoaded', () => {
+    const shareButton = document.getElementById('share-button');
+    if (shareButton) {
+        shareButton.addEventListener('click', captureAndShare);
+    }
+});
