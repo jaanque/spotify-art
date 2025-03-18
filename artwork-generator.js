@@ -46,7 +46,7 @@ function resizeCanvas() {
 // Main function to generate artwork from track data
 function generateArtwork(tracks) {
     // Solo tomar los primeros 50 tracks en lugar de todos
-    trackData = tracks.slice(0, 50);
+    trackData = tracks.slice(0, 80);
     initCanvas();
     
     // Create particles from tracks
@@ -97,10 +97,10 @@ function createParticles() {
     // Calcular tamaño de celda con menos espacio entre elementos
     const cellWidth = canvas.width / cols;
     const cellHeight = canvas.height / rows;
-    const padding = Math.min(cellWidth, cellHeight) * 0.1; // Reducir el padding al 10% para elementos más grandes
+    const padding = 0;
     
     // Tamaño de marco más grande (aumentado al 85% del tamaño de la celda)
-    const frameSize = Math.min(cellWidth, cellHeight) * 0.85;
+    const frameSize = Math.min(cellWidth, cellHeight) * 0.98;
     
     // Crear partículas en patrón de rejilla
     let index = 0;
@@ -112,8 +112,8 @@ function createParticles() {
             
             // Cálculo de posición - pequeño offset aleatorio para interés visual
             // Reducir el offset para una distribución más uniforme
-            const offsetX = (Math.random() - 0.5) * padding * 0.8;
-            const offsetY = (Math.random() - 0.5) * padding * 0.8;
+            const offsetX = 0;
+            const offsetY = 0;
             
             // Calcular posición
             const x = c * cellWidth + cellWidth / 2 + offsetX;
@@ -128,7 +128,7 @@ function createParticles() {
                 img: img,
                 track: trackData[index],
                 opacity: 1, // Opacidad completa
-                rotation: (Math.random() - 0.5) * 0.08, // Inclinación muy ligera para disposición artística
+                rotation: 0, // Inclinación muy ligera para disposición artística
                 frameColor: getRandomFrameColor(), // Color aleatorio de marco clásico
                 frameStyle: Math.floor(Math.random() * 4), // Diferentes estilos de marco
                 shadow: 5 + Math.random() * 10 // Profundidad de la sombra
@@ -198,8 +198,6 @@ function drawFramedParticle(particle) {
     
     // Calculate frame dimensions
     const frameWidth = particle.frameSize; // Frame thickness
-    const frameOuterWidth = size + frameWidth * 2;
-    const frameOuterHeight = frameOuterWidth;
     
     // Draw shadow for the frame
     ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
@@ -207,8 +205,14 @@ function drawFramedParticle(particle) {
     ctx.shadowOffsetX = 5;
     ctx.shadowOffsetY = 5;
     
-    // Draw outer frame
-    drawFrame(size, frameWidth, particle.frameColor, particle.frameStyle);
+    // Draw the complete frame as a solid rectangle
+    const outerX = -size/2 - frameWidth;
+    const outerY = -size/2 - frameWidth;
+    const outerWidth = size + frameWidth * 2;
+    const outerHeight = size + frameWidth * 2;
+    
+    ctx.fillStyle = particle.frameColor;
+    ctx.fillRect(outerX, outerY, outerWidth, outerHeight);
     
     // Reset shadow
     ctx.shadowColor = 'transparent';
@@ -216,28 +220,14 @@ function drawFramedParticle(particle) {
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
     
-    // Draw album cover with slight inset
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(-size/2, -size/2, size, size);
-    ctx.clip();
-    
-    // Draw the album cover
+    // Draw album cover directly on top of the frame
+    // Make sure dimensions are exact to avoid any gaps
     if (particle.img.complete) {
         ctx.drawImage(particle.img, -size/2, -size/2, size, size);
     }
     
-    // Add a subtle texture/canvas effect over image
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
-    for (let i = 0; i < 5; i++) {
-        for (let j = 0; j < 5; j++) {
-            if ((i + j) % 2 === 0) {
-                ctx.fillRect(-size/2 + i*size/5, -size/2 + j*size/5, size/5, size/5);
-            }
-        }
-    }
-    
-    ctx.restore();
+    // Add frame details without disturbing the cover
+    drawFrameDetails(size, frameWidth, particle.frameColor, particle.frameStyle);
     
     // Add a gold plate under the frame if hovered
     if (isHovered) {
@@ -261,9 +251,8 @@ function drawFramedParticle(particle) {
     ctx.restore();
 }
 
-// Draw different frame styles
-function drawFrame(size, frameWidth, frameColor, frameStyle) {
-    // Common frame setup
+// New function to draw frame details without affecting the cover
+function drawFrameDetails(size, frameWidth, frameColor, frameStyle) {
     const outerX = -size/2 - frameWidth;
     const outerY = -size/2 - frameWidth;
     const outerWidth = size + frameWidth * 2;
@@ -271,13 +260,6 @@ function drawFrame(size, frameWidth, frameColor, frameStyle) {
     
     switch(frameStyle) {
         case 0: // Classic wooden frame
-            // Outer frame
-            ctx.fillStyle = frameColor;
-            ctx.beginPath();
-            ctx.rect(outerX, outerY, outerWidth, outerHeight);
-            ctx.rect(-size/2, -size/2, size, size);
-            ctx.fill('evenodd');
-            
             // Frame detail
             ctx.strokeStyle = '#000000';
             ctx.lineWidth = 1;
@@ -286,13 +268,6 @@ function drawFrame(size, frameWidth, frameColor, frameStyle) {
             break;
             
         case 1: // Ornate gold frame
-            // Base frame
-            ctx.fillStyle = frameColor;
-            ctx.beginPath();
-            ctx.rect(outerX, outerY, outerWidth, outerHeight);
-            ctx.rect(-size/2, -size/2, size, size);
-            ctx.fill('evenodd');
-            
             // Gold details
             ctx.fillStyle = '#D4AF37';
             
@@ -320,27 +295,13 @@ function drawFrame(size, frameWidth, frameColor, frameStyle) {
             break;
             
         case 2: // Modern minimalist frame
-            // Thin clean frame
-            ctx.fillStyle = '#000000';
-            ctx.beginPath();
-            ctx.rect(outerX, outerY, outerWidth, outerHeight);
-            ctx.rect(-size/2, -size/2, size, size);
-            ctx.fill('evenodd');
-            
             // Light inner border
             ctx.strokeStyle = '#FFFFFF';
             ctx.lineWidth = 1;
-            ctx.strokeRect(-size/2 - 2, -size/2 - 2, size + 4, size + 4);
+            ctx.strokeRect(-size/2 + 1, -size/2 + 1, size - 2, size - 2);
             break;
             
         case 3: // Distressed vintage frame
-            // Base frame
-            ctx.fillStyle = frameColor;
-            ctx.beginPath();
-            ctx.rect(outerX, outerY, outerWidth, outerHeight);
-            ctx.rect(-size/2, -size/2, size, size);
-            ctx.fill('evenodd');
-            
             // Add distressed texture
             ctx.globalAlpha = 0.3;
             for (let i = 0; i < 20; i++) {
