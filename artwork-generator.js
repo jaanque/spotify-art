@@ -435,61 +435,75 @@ function captureAndShare() {
     // Give the canvas a moment to ensure it's fully rendered
     setTimeout(() => {
         try {
-            // Reference to the canvas and its container
+            // Reference to the canvas and ensure we redraw it completely
             const canvas = document.getElementById('flow-canvas');
-            const canvasContainer = document.getElementById('canvas-container');
             
             if (!canvas) {
                 throw new Error('Canvas not found');
             }
             
-            // Force a redraw of the canvas to ensure content is present
+            // Force a complete redraw of the canvas with all album covers
             drawStaticLayout();
             
-            // Try to capture canvas directly first
+            // Make sure all images are loaded before capturing
+            let allImagesLoaded = true;
+            particles.forEach(particle => {
+                if (!particle.img.complete) {
+                    allImagesLoaded = false;
+                }
+            });
+            
+            if (!allImagesLoaded) {
+                // Wait for images to load
+                setTimeout(() => captureAndShare(), 500);
+                return;
+            }
+            
             try {
                 // Apply CORS settings to allow image data extraction
-                canvas.crossOrigin = "anonymous";
-                
-                // Get data URL from canvas
-                const dataUrl = canvas.toDataURL('image/png');
-                
-                // Verify the data URL is valid
-                if (dataUrl === 'data:,' || dataUrl === 'data:image/png;base64,') {
-                    throw new Error('Canvas produced an empty image');
-                }
-                
-                // Process valid dataUrl
-                processDataUrlAndShare(dataUrl);
+                canvas.toBlob((blob) => {
+                    if (!blob || blob.size < 1000) {
+                        throw new Error('Canvas capture failed or produced empty image');
+                    }
+                    
+                    const file = new File([blob], 'music-flow-gallery.png', {type: 'image/png'});
+                    
+                    // Try Web Share API with file
+                    if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
+                        navigator.share({
+                            title: 'My Music Flow Gallery',
+                            text: 'Check out this visualization of my music collection as an art gallery!',
+                            files: [file]
+                        }).catch(error => {
+                            console.error('Share API error:', error);
+                            downloadImage(canvas);
+                        }).finally(() => {
+                            hideLoading();
+                        });
+                    } else {
+                        // Download the image directly
+                        downloadImage(canvas);
+                        hideLoading();
+                    }
+                }, 'image/png', 1.0);
                 
             } catch (canvasError) {
                 console.error('Direct canvas capture failed:', canvasError);
-                
-                // Fallback: Use html2canvas to capture the whole container
-                if (typeof html2canvas === 'function') {
-                    // Options to improve quality
-                    const options = {
-                        scale: 2, // Higher resolution
-                        useCORS: true, // Allow cross-origin images
-                        allowTaint: true, // Allow tainted canvas
-                        backgroundColor: '#F5F5F0' // Match museum background
-                    };
-                    
-                    html2canvas(canvasContainer, options).then(capturedCanvas => {
-                        const capturedDataUrl = capturedCanvas.toDataURL('image/png');
-                        processDataUrlAndShare(capturedDataUrl);
+                loadHtml2Canvas(() => {
+                    html2canvas(document.getElementById('canvas-container'), {
+                        useCORS: true,
+                        allowTaint: true,
+                        backgroundColor: '#F5F5F0',
+                        scale: 2
+                    }).then(capturedCanvas => {
+                        downloadImage(capturedCanvas);
+                        hideLoading();
                     }).catch(err => {
                         console.error('html2canvas failed:', err);
                         showError('Could not capture the image');
+                        hideLoading();
                     });
-                } else {
-                    // Load html2canvas dynamically and try again
-                    loadHtml2Canvas(() => {
-                        // Retry after 500ms to ensure the library is loaded
-                        setTimeout(() => captureAndShare(), 500);
-                    });
-                    return;
-                }
+                });
             }
             
         } catch (error) {
@@ -497,101 +511,38 @@ function captureAndShare() {
             showError('Could not share image: ' + error.message);
             hideLoading();
         }
-    }, 500); // Wait 500ms to ensure everything is rendered
+    }, 1000); // Wait a full second to ensure everything is rendered
 }
 
-// Improved html2canvas loading with callback
-function loadHtml2Canvas(callback) {
-    if (typeof html2canvas !== 'undefined') {
-        if (callback) callback();
-        return;
-    }
-    
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    script.integrity = 'sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
-    script.crossOrigin = 'anonymous';
-    script.referrerPolicy = 'no-referrer';
-    
-    script.onload = function() {
-        console.log('html2canvas loaded successfully');
-        if (callback) callback();
-    };
-    
-    script.onerror = function() {
-        console.error('Failed to load html2canvas');
-        showError('Could not load image capture library');
-        hideLoading();
-    };
-    
-    document.head.appendChild(script);
-}
-
-// Update the process function to better handle the image blob
-function processDataUrlAndShare(dataUrl) {
-    // Show success message temporarily
-    showMessage('Image captured successfully!', 2000);
-    
-    // Convert dataURL to Blob
-    const byteString = atob(dataUrl.split(',')[1]);
-    const mimeType = dataUrl.split(',')[0].split(':')[1].split(';')[0];
-    const arrayBuffer = new ArrayBuffer(byteString.length);
-    const uint8Array = new Uint8Array(arrayBuffer);
-    
-    for (let i = 0; i < byteString.length; i++) {
-        uint8Array[i] = byteString.charCodeAt(i);
-    }
-    
-    const blob = new Blob([arrayBuffer], {type: mimeType});
-    const file = new File([blob], 'music-flow-gallery.png', {type: 'image/png'});
-    
-    // Try Web Share API with file
-    if (navigator.share && navigator.canShare && navigator.canShare({files: [file]})) {
-        navigator.share({
-            title: 'My Music Flow Gallery',
-            text: 'Check out this visualization of my music collection as an art gallery!',
-            files: [file]
-        }).catch(error => {
-            console.error('Share API error:', error);
-            fallbackShare(dataUrl);
-        }).finally(() => {
-            hideLoading();
-        });
-    } else if (navigator.share) {
-        // Try Web Share API without file
-        navigator.share({
-            title: 'My Music Flow Gallery',
-            text: 'Check out this visualization of my music collection as an art gallery!',
-            url: document.location.href
-        }).catch(() => {
-            fallbackShare(dataUrl);
-        }).finally(() => {
-            hideLoading();
-        });
-    } else {
-        // If Web Share API is not available, fall back to download
-        fallbackShare(dataUrl);
-        hideLoading();
+// Helper function to download the canvas as an image
+function downloadImage(canvas) {
+    try {
+        // Create link to download the image
+        const link = document.createElement('a');
+        link.download = 'music-flow-gallery.png';
+        
+        // Convert canvas to data URL
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showMessage('Image downloaded successfully!');
+    } catch (error) {
+        console.error('Download error:', error);
+        showError('Could not download the image');
     }
 }
 
-// Improved message function
-function showMessage(message, duration = 3000) {
-    // Create or get notification element
-    let notification = document.getElementById('notification');
-    if (!notification) {
-        notification = document.createElement('div');
-        notification.id = 'notification';
-        notification.className = 'notification';
-        document.body.appendChild(notification);
+// Function to hide loading animation
+function hideLoading() {
+    const loadingAnimation = document.querySelector('.loading-animation');
+    if (loadingAnimation) {
+        loadingAnimation.classList.add('hidden');
     }
-    
-    // Set message and show
-    notification.textContent = message;
-    notification.classList.add('show');
-    
-    // Hide after duration
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, duration);
+}
+
+// Function to show an error message
+function showError(message) {
+    showMessage(message, 4000);
 }
