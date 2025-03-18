@@ -190,6 +190,8 @@ header p {
     background-size: 20px 20px;
     max-width: 650px;
     aspect-ratio: 2/3; /* Portrait aspect ratio */
+    padding: 0; /* Ensure no padding */
+    margin: 0; /* Ensure no margin */
 }
 
 /* Museum styling elements */
@@ -219,6 +221,9 @@ header p {
     width: 100%;
     height: 100%;
     cursor: pointer;
+    display: block; /* Prevents inline element spacing */
+    padding: 0;
+    margin: 0;
 }
 
 /* Loading Animation */

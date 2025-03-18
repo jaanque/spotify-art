@@ -94,14 +94,14 @@ function createParticles() {
         cols++;
     }
     
-    // Calcular tamaño de celda con menos espacio entre elementos
+    // Calcular tamaño de celda sin espacio extra
     const cellWidth = canvas.width / cols;
     const cellHeight = canvas.height / rows;
     
     // Tamaño de marco usando 100% del tamaño de la celda
     const frameSize = Math.min(cellWidth, cellHeight) * 1.0;
     
-    // Crear partículas en patrón de rejilla
+    // Crear partículas en patrón de rejilla - eliminando offsets
     let index = 0;
     for (let r = 0; r < rows && index < trackData.length; r++) {
         for (let c = 0; c < cols && index < trackData.length; c++) {
@@ -109,20 +109,21 @@ function createParticles() {
             const img = new Image();
             img.src = trackData[index].album.images[0].url;
             
-            // Calcular posición - sin offset aleatorio para evitar espacios
-            const x = c * cellWidth + cellWidth / 2;
-            const y = r * cellHeight + cellHeight / 2;
+            // Posicionamiento exacto sin margen extra
+            // Usar posicionamiento absoluto desde el borde izquierdo
+            const x = c * cellWidth + (cellWidth / 2);
+            const y = r * cellHeight + (cellHeight / 2);
             
             // Crear partícula con datos de la pista y propiedades del marco
             particles.push({
                 x: x,
                 y: y,
                 size: frameSize, // Tamaño de la portada
-                frameSize: frameSize * 0.1, // Tamaño del padding del marco
+                frameSize: frameSize * 0.08, // Reducir el padding del marco
                 img: img,
                 track: trackData[index],
                 opacity: 1, // Opacidad completa
-                rotation: 0, // Sin inclinación para evitar espacios
+                rotation: 0, // Sin inclinación
                 frameColor: getRandomFrameColor(), // Color aleatorio de marco clásico
                 frameStyle: Math.floor(Math.random() * 4), // Diferentes estilos de marco
                 shadow: 5 + Math.random() * 10 // Profundidad de la sombra
@@ -132,18 +133,8 @@ function createParticles() {
         }
     }
     
-    // Añadir un pequeño desplazamiento para centrar mejor si hay menos elementos que celdas
-    if (trackData.length < rows * cols) {
-        const emptyCells = rows * cols - trackData.length;
-        const offsetForCentering = (emptyCells * cellWidth / 2) / cols;
-        
-        // Solo aplicar offset si hay suficientes celdas vacías
-        if (emptyCells > cols / 2) {
-            particles.forEach(p => {
-                p.x += offsetForCentering;
-            });
-        }
-    }
+    // Eliminamos completamente el offset para centrado, para asegurar que
+    // no haya margen extra a la izquierda
 }
 
 // Get random classic frame colors
@@ -190,7 +181,7 @@ function drawFramedParticle(particle) {
     const isHovered = particle === hoveredParticle;
     const size = isHovered ? particle.size * 1.1 : particle.size;
     
-    // Calculate frame dimensions
+    // Calculate frame dimensions - reducimos el tamaño del marco
     const frameWidth = particle.frameSize; // Frame thickness
     
     // Draw shadow for the frame
@@ -215,8 +206,8 @@ function drawFramedParticle(particle) {
     ctx.shadowOffsetY = 0;
     
     // Draw album cover directly on the frame with no gap
-    // Increased size to eliminate any gap between frame and cover
-    const coverSize = size + 0.5; // Slightly larger to ensure no gap
+    // Slightly larger than the inner frame area to completely eliminate gaps
+    const coverSize = size + 1; // Aumentamos para asegurar que no haya espacios
     
     if (particle.img.complete) {
         // Draw the image just slightly larger than the inner frame area
