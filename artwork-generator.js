@@ -97,10 +97,9 @@ function createParticles() {
     // Calcular tamaño de celda con menos espacio entre elementos
     const cellWidth = canvas.width / cols;
     const cellHeight = canvas.height / rows;
-    const padding = 0;
     
-    // Tamaño de marco más grande (aumentado al 85% del tamaño de la celda)
-    const frameSize = Math.min(cellWidth, cellHeight) * 0.98;
+    // Tamaño de marco usando 100% del tamaño de la celda
+    const frameSize = Math.min(cellWidth, cellHeight) * 1.0;
     
     // Crear partículas en patrón de rejilla
     let index = 0;
@@ -110,25 +109,20 @@ function createParticles() {
             const img = new Image();
             img.src = trackData[index].album.images[0].url;
             
-            // Cálculo de posición - pequeño offset aleatorio para interés visual
-            // Reducir el offset para una distribución más uniforme
-            const offsetX = 0;
-            const offsetY = 0;
-            
-            // Calcular posición
-            const x = c * cellWidth + cellWidth / 2 + offsetX;
-            const y = r * cellHeight + cellHeight / 2 + offsetY;
+            // Calcular posición - sin offset aleatorio para evitar espacios
+            const x = c * cellWidth + cellWidth / 2;
+            const y = r * cellHeight + cellHeight / 2;
             
             // Crear partícula con datos de la pista y propiedades del marco
             particles.push({
                 x: x,
                 y: y,
                 size: frameSize, // Tamaño de la portada
-                frameSize: frameSize * 0.15, // Tamaño del padding del marco
+                frameSize: frameSize * 0.1, // Tamaño del padding del marco
                 img: img,
                 track: trackData[index],
                 opacity: 1, // Opacidad completa
-                rotation: 0, // Inclinación muy ligera para disposición artística
+                rotation: 0, // Sin inclinación para evitar espacios
                 frameColor: getRandomFrameColor(), // Color aleatorio de marco clásico
                 frameStyle: Math.floor(Math.random() * 4), // Diferentes estilos de marco
                 shadow: 5 + Math.random() * 10 // Profundidad de la sombra
@@ -220,10 +214,13 @@ function drawFramedParticle(particle) {
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
     
-    // Draw album cover directly on top of the frame
-    // Make sure dimensions are exact to avoid any gaps
+    // Draw album cover directly on the frame with no gap
+    // Increased size to eliminate any gap between frame and cover
+    const coverSize = size + 0.5; // Slightly larger to ensure no gap
+    
     if (particle.img.complete) {
-        ctx.drawImage(particle.img, -size/2, -size/2, size, size);
+        // Draw the image just slightly larger than the inner frame area
+        ctx.drawImage(particle.img, -coverSize/2, -coverSize/2, coverSize, coverSize);
     }
     
     // Add frame details without disturbing the cover
@@ -257,6 +254,11 @@ function drawFrameDetails(size, frameWidth, frameColor, frameStyle) {
     const outerY = -size/2 - frameWidth;
     const outerWidth = size + frameWidth * 2;
     const outerHeight = size + frameWidth * 2;
+    
+    // Inner frame border (directly against the album cover)
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(-size/2, -size/2, size, size);
     
     switch(frameStyle) {
         case 0: // Classic wooden frame
@@ -295,10 +297,7 @@ function drawFrameDetails(size, frameWidth, frameColor, frameStyle) {
             break;
             
         case 2: // Modern minimalist frame
-            // Light inner border
-            ctx.strokeStyle = '#FFFFFF';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(-size/2 + 1, -size/2 + 1, size - 2, size - 2);
+            // No inner border for minimalist frame
             break;
             
         case 3: // Distressed vintage frame
@@ -309,7 +308,7 @@ function drawFrameDetails(size, frameWidth, frameColor, frameStyle) {
                 const y = outerY + Math.random() * outerHeight;
                 const s = Math.random() * 5 + 2;
                 
-                // Only draw on the frame area
+                // Only draw on the frame area - ensure no overlap with album cover
                 if (x > -size/2 && x < size/2 && y > -size/2 && y < size/2) continue;
                 
                 ctx.fillStyle = Math.random() > 0.5 ? '#FFFFFF' : '#000000';
