@@ -431,3 +431,28 @@ function toggleAudioPreview() {
         previewButton.textContent = 'Preview';
     }
 }
+
+// Add this function at the end of artwork-generator.js
+
+// Reset canvas when logging out
+function resetCanvas() {
+    // Clear animation frame if it exists
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+    }
+    
+    // Clear particles array
+    particles = [];
+    
+    // Reset track data
+    trackData = [];
+    
+    // Clear canvas
+    if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    
+    // Reset hover state
+    hoveredParticle = null;
+}

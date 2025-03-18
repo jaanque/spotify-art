@@ -327,6 +327,24 @@ footer {
     color: #777;
 }
 
+/* Logout button styling */
+#logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 5;
+    background-color: #f44336;
+    color: white;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
+}
+
+#logout-button:hover {
+    opacity: 1;
+    background-color: #f44336;
+    transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
     .track-details {
         flex-direction: column;

@@ -7,9 +7,11 @@ const scopes = 'user-top-read';
 const loginButton = document.getElementById('login-button');
 const loginContainer = document.getElementById('login-container');
 const artworkContainer = document.getElementById('artwork-container');
+const logoutButton = document.getElementById('logout-button');
 
 // Event listeners
 loginButton.addEventListener('click', initiateLogin);
+logoutButton.addEventListener('click', logout);
 
 // Check if we're coming back from Spotify auth
 window.onload = function() {
@@ -97,4 +99,21 @@ function showLoginInterface() {
     
     // Clear URL hash to prevent token leakage
     history.replaceState(null, null, ' ');
+}
+
+// Logout function
+function logout() {
+    // Clear session storage
+    sessionStorage.removeItem('spotify_access_token');
+    
+    // Show login interface
+    showLoginInterface();
+    
+    // Clear URL hash
+    history.replaceState(null, null, ' ');
+    
+    // Reset canvas if needed
+    if (typeof resetCanvas === 'function') {
+        resetCanvas();
+    }
 }
