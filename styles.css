@@ -327,22 +327,36 @@ footer {
     color: #777;
 }
 
-/* Logout button styling */
+/* Estilos actualizados para el botón de logout */
 #logout-button {
-    position: absolute;
+    position: fixed; /* Cambiado de absolute a fixed para que permanezca visible al desplazarse */
     top: 20px;
     right: 20px;
-    z-index: 5;
+    z-index: 100; /* Aumentado para asegurar que esté por encima de otros elementos */
     background-color: #f44336;
     color: white;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    opacity: 1; /* Cambiado de 0.8 a 1 para mayor visibilidad */
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra añadida para destacar el botón */
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 #logout-button:hover {
-    opacity: 1;
-    background-color: #f44336;
+    background-color: #d32f2f; /* Rojo más oscuro al pasar el mouse */
     transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#logout-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
