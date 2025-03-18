@@ -45,7 +45,8 @@ function resizeCanvas() {
 
 // Main function to generate artwork from track data
 function generateArtwork(tracks) {
-    trackData = tracks;
+    // Solo tomar los primeros 50 tracks en lugar de todos
+    trackData = tracks.slice(0, 50);
     initCanvas();
     
     // Create particles from tracks
@@ -55,7 +56,7 @@ function generateArtwork(tracks) {
     drawStaticLayout();
     
     // Preload images for better performance
-    preloadImages(tracks);
+    preloadImages(trackData);
     
     // Set background for the canvas to look like museum wall
     canvas.parentElement.style.backgroundColor = '#F5F5F0';
@@ -75,63 +76,78 @@ function preloadImages(tracks) {
     });
 }
 
-// Create particles from track data - using a grid-like layout
+// Create particles from track data - usando un layout optimizado para 50 elementos
 function createParticles() {
     particles = [];
     
-    // Calculate grid dimensions based on number of tracks
+    // Calculate grid dimensions based on number of tracks (ahora 50 máximo)
     const itemCount = trackData.length;
     const aspectRatio = canvas.width / canvas.height;
     
-    // Calculate rows and columns for grid
-    let cols = Math.ceil(Math.sqrt(itemCount * aspectRatio));
+    // Calcular filas y columnas para una distribución óptima
+    // Para 50 elementos, una buena distribución podría ser 7x7 o 8x6 dependiendo del aspect ratio
+    let cols = Math.round(Math.sqrt(itemCount * aspectRatio));
     let rows = Math.ceil(itemCount / cols);
     
-    // Ensure we have enough cells
+    // Asegurarnos de tener suficientes celdas
     while (rows * cols < itemCount) {
         cols++;
     }
     
-    // Calculate cell size with more space
+    // Calcular tamaño de celda con menos espacio entre elementos
     const cellWidth = canvas.width / cols;
     const cellHeight = canvas.height / rows;
-    const padding = Math.min(cellWidth, cellHeight) * 0.2; // 20% padding
+    const padding = Math.min(cellWidth, cellHeight) * 0.1; // Reducir el padding al 10% para elementos más grandes
     
-    // Determine optimal frame size
-    const frameSize = Math.min(cellWidth, cellHeight) * 0.7; // 70% of cell size
+    // Tamaño de marco más grande (aumentado al 85% del tamaño de la celda)
+    const frameSize = Math.min(cellWidth, cellHeight) * 0.85;
     
-    // Create particles in grid pattern
+    // Crear partículas en patrón de rejilla
     let index = 0;
     for (let r = 0; r < rows && index < trackData.length; r++) {
         for (let c = 0; c < cols && index < trackData.length; c++) {
-            // Create image from album cover
+            // Crear imagen de la portada del álbum
             const img = new Image();
             img.src = trackData[index].album.images[0].url;
             
-            // Position calculation - distribute in grid with offset for visual interest
-            const offsetX = (Math.random() - 0.5) * padding;
-            const offsetY = (Math.random() - 0.5) * padding;
+            // Cálculo de posición - pequeño offset aleatorio para interés visual
+            // Reducir el offset para una distribución más uniforme
+            const offsetX = (Math.random() - 0.5) * padding * 0.8;
+            const offsetY = (Math.random() - 0.5) * padding * 0.8;
             
-            // Calculate position
+            // Calcular posición
             const x = c * cellWidth + cellWidth / 2 + offsetX;
             const y = r * cellHeight + cellHeight / 2 + offsetY;
             
-            // Create particle with track data and frame properties
+            // Crear partícula con datos de la pista y propiedades del marco
             particles.push({
                 x: x,
                 y: y,
-                size: frameSize, // Size of the cover
-                frameSize: frameSize * 0.15, // Frame size padding
+                size: frameSize, // Tamaño de la portada
+                frameSize: frameSize * 0.15, // Tamaño del padding del marco
                 img: img,
                 track: trackData[index],
-                opacity: 1, // Full opacity
-                rotation: (Math.random() - 0.5) * 0.1, // Very slight tilt for artistic arrangement
-                frameColor: getRandomFrameColor(), // Random classic frame color
-                frameStyle: Math.floor(Math.random() * 4), // Different frame styles
-                shadow: 5 + Math.random() * 10 // Shadow depth
+                opacity: 1, // Opacidad completa
+                rotation: (Math.random() - 0.5) * 0.08, // Inclinación muy ligera para disposición artística
+                frameColor: getRandomFrameColor(), // Color aleatorio de marco clásico
+                frameStyle: Math.floor(Math.random() * 4), // Diferentes estilos de marco
+                shadow: 5 + Math.random() * 10 // Profundidad de la sombra
             });
             
             index++;
+        }
+    }
+    
+    // Añadir un pequeño desplazamiento para centrar mejor si hay menos elementos que celdas
+    if (trackData.length < rows * cols) {
+        const emptyCells = rows * cols - trackData.length;
+        const offsetForCentering = (emptyCells * cellWidth / 2) / cols;
+        
+        // Solo aplicar offset si hay suficientes celdas vacías
+        if (emptyCells > cols / 2) {
+            particles.forEach(p => {
+                p.x += offsetForCentering;
+            });
         }
     }
 }
@@ -431,8 +447,6 @@ function toggleAudioPreview() {
         previewButton.textContent = 'Preview';
     }
 }
-
-// Add this function at the end of artwork-generator.js
 
 // Reset canvas when logging out
 function resetCanvas() {
