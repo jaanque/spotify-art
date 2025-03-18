@@ -513,110 +513,95 @@ footer {
     }
 }
 
-/* Añadir estos estilos en styles.css */
+/* Añadir al archivo styles.css */
 
-/* Estilos para el botón de compartir */
-.share-button {
+/* Share Button Styles */
+#share-button {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    color: white;
+    top: 20px;
+    right: 100px; /* Positioned to the left of logout button */
+    z-index: 100;
+    background-color: var(--gold);
+    color: var(--dark-text);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: var(--transition-standard);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
     border: none;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    z-index: 100;
 }
 
-.share-button:hover {
-    transform: translateY(-3px);
-    background-color: var(--primary-hover);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+#share-button:hover {
+    background-color: #e5c451;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-.share-button:active {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+#share-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.share-button svg {
-    width: 24px;
-    height: 24px;
+#share-button::before {
+    content: '↗';
+    margin-right: 5px;
+    font-size: 1.1rem;
 }
 
-/* Mejorar la visibilidad en diferentes fondos */
-.share-button::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
-    z-index: -1;
+/* Toast notification styles */
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: var(--dark-bg);
+    color: var(--light-text);
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-/* Adaptaciones para dispositivos móviles */
+.toast.show {
+    opacity: 1;
+}
+
+/* Responsive Styles for Share Button */
 @media (max-width: 768px) {
-    .share-button {
-        bottom: 15px;
-        right: 15px;
-        width: 60px;
-        height: 60px;
-    }
-    
-    .share-button svg {
-        width: 28px;
-        height: 28px;
+    #share-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        right: 90px;
+        top: 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .share-button {
-        bottom: 15px;
-        right: 15px;
-        width: 55px;
-        height: 55px;
+    #share-button {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.5rem;
+        right: 70px;
+        top: 10px;
+        border-radius: 3px;
     }
 }
 
-/* Estilos para el mensaje de "Compartir" que aparece al mantener presionado en móviles */
-.share-button::after {
-    content: 'Compartir';
-    position: absolute;
-    bottom: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 12px;
-    color: var(--dark-text);
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 3px 8px;
-    border-radius: 10px;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    white-space: nowrap;
-}
-
-.share-button:hover::after {
-    opacity: 1;
-}
-
-/* Estilos para el tooltip en dispositivos móviles (solo aparece al tocar) */
-@media (max-width: 768px) {
-    .share-button::after {
-        opacity: 0;
-    }
-    
-    .share-button:active::after {
-        opacity: 1;
+/* For very small screens */
+@media (max-width: 360px) {
+    #share-button {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.5rem;
+        letter-spacing: 0.5px;
+        right: 60px;
     }
 }

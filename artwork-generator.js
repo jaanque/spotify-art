@@ -422,66 +422,159 @@ function resetCanvas() {
     hoveredParticle = null;
 }
 
-// Añadir esta función al final de artwork-generator.js
-
-// Función para capturar y compartir el canvas
+// Función mejorada para capturar y compartir el canvas
 function captureAndShare() {
     // Mostrar una animación de carga mientras se captura
-    document.querySelector('.loading-animation').classList.remove('hidden');
-    document.querySelector('.loading-animation p').textContent = 'Preparando imagen para compartir...';
+    const loadingAnimation = document.querySelector('.loading-animation');
+    if (loadingAnimation) {
+        loadingAnimation.classList.remove('hidden');
+        const loadingText = loadingAnimation.querySelector('p');
+        if (loadingText) loadingText.textContent = 'Preparando imagen para compartir...';
+    }
     
-    // Esperar un momento para que la animación se muestre
     setTimeout(() => {
         try {
-            // Capturar solo el contenido del canvas
-            const dataUrl = canvas.toDataURL('image/png');
+            // Referencia al canvas
+            const canvas = document.getElementById('flow-canvas');
             
-            // Convertir el dataURL a Blob para compartir
-            fetch(dataUrl)
-                .then(res => res.blob())
-                .then(blob => {
-                    // Crear un objeto de archivo
-                    const file = new File([blob], 'mi-musica-flow.png', { type: 'image/png' });
-                    
-                    // Verificar si el navegador soporta la API de compartir
-                    if (navigator.share) {
-                        navigator.share({
-                            title: 'Mi Música Flow',
-                            text: 'Mira mi colección de música visualizada como una galería de arte',
-                            files: [file]
-                        }).catch(error => {
-                            console.error('Error al compartir:', error);
-                            fallbackShare(dataUrl);
-                        }).finally(() => {
-                            document.querySelector('.loading-animation').classList.add('hidden');
-                        });
-                    } else {
-                        fallbackShare(dataUrl);
-                        document.querySelector('.loading-animation').classList.add('hidden');
-                    }
-                });
+            if (!canvas) {
+                throw new Error('No se pudo encontrar el canvas');
+            }
+            
+            // Verificar que el canvas tenga contenido
+            if (canvas.width === 0 || canvas.height === 0) {
+                throw new Error('El canvas está vacío');
+            }
+            
+            // Asegurarse de que el canvas esté limpio y renderizado
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                throw new Error('No se pudo obtener el contexto del canvas');
+            }
+            
+            // Intentar capturar la imagen del canvas
+            let dataUrl;
+            try {
+                dataUrl = canvas.toDataURL('image/png');
+                
+                // Verificar que el dataUrl sea válido (no sea el dataUrl de un canvas vacío)
+                if (dataUrl === 'data:,' || dataUrl === 'data:image/png;base64,') {
+                    throw new Error('El canvas generó una imagen vacía');
+                }
+            } catch (e) {
+                console.error('Error al obtener dataURL del canvas:', e);
+                
+                // Alternativa: usar html2canvas para capturar el contenedor completo
+                const canvasContainer = document.getElementById('canvas-container');
+                if (!canvasContainer) {
+                    throw new Error('No se pudo encontrar el contenedor del canvas');
+                }
+                
+                // Si tenemos html2canvas disponible, lo usamos
+                if (typeof html2canvas === 'function') {
+                    html2canvas(canvasContainer).then(capturedCanvas => {
+                        const capturedDataUrl = capturedCanvas.toDataURL('image/png');
+                        processDataUrlAndShare(capturedDataUrl);
+                    }).catch(err => {
+                        console.error('Error con html2canvas:', err);
+                        showError('No se pudo capturar la imagen');
+                    });
+                    return;
+                } else {
+                    throw new Error('No hay método disponible para capturar la imagen');
+                }
+            }
+            
+            // Si llegamos aquí, tenemos un dataUrl válido
+            processDataUrlAndShare(dataUrl);
+            
         } catch (error) {
             console.error('Error al capturar el canvas:', error);
-            document.querySelector('.loading-animation').classList.add('hidden');
-            alert('No se pudo compartir la imagen. Inténtalo de nuevo.');
+            showError('No se pudo compartir la imagen: ' + error.message);
         }
     }, 300);
 }
 
-// Función de respaldo para navegadores que no soportan la API de compartir
+// Función para procesar el dataUrl y compartirlo
+function processDataUrlAndShare(dataUrl) {
+    // Convertir el dataURL a Blob para compartir
+    fetch(dataUrl)
+        .then(res => res.blob())
+        .then(blob => {
+            // Crear un objeto de archivo
+            const file = new File([blob], 'mi-musica-flow.png', { type: 'image/png' });
+            
+            // Verificar si el navegador soporta la API de compartir con archivos
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+                navigator.share({
+                    title: 'Mi Música Flow',
+                    text: 'Mira mi colección de música visualizada como una galería de arte',
+                    files: [file]
+                }).catch(error => {
+                    console.error('Error al compartir:', error);
+                    fallbackShare(dataUrl);
+                }).finally(() => {
+                    hideLoading();
+                });
+            } else {
+                // Verificar si soporta compartir sin archivos
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Mi Música Flow',
+                        text: 'Mira mi colección de música visualizada como una galería de arte',
+                        url: document.location.href
+                    }).catch(() => {
+                        fallbackShare(dataUrl);
+                    }).finally(() => {
+                        hideLoading();
+                    });
+                } else {
+                    fallbackShare(dataUrl);
+                    hideLoading();
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error al procesar la imagen:', error);
+            showError('No se pudo procesar la imagen para compartir');
+        });
+}
+
+// Función mejorada de respaldo para navegadores que no soportan la API de compartir
 function fallbackShare(dataUrl) {
-    // Crear un elemento ancla
-    const a = document.createElement('a');
-    a.href = dataUrl;
-    a.download = 'mi-musica-flow.png';
-    
-    // Simular click para descargar
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    
-    // Notificar al usuario
-    alert('La imagen se ha descargado. Puedes compartirla manualmente.');
+    try {
+        // Crear un elemento ancla
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'mi-musica-flow.png';
+        
+        // Simular click para descargar
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        
+        // Notificar al usuario
+        showMessage('La imagen se ha descargado. Puedes compartirla manualmente.');
+    } catch (error) {
+        console.error('Error en fallback:', error);
+        showError('No se pudo descargar la imagen');
+    }
+}
+
+// Funciones auxiliares para UI
+function hideLoading() {
+    const loadingAnimation = document.querySelector('.loading-animation');
+    if (loadingAnimation) loadingAnimation.classList.add('hidden');
+}
+
+function showError(message) {
+    hideLoading();
+    alert(message || 'Ocurrió un error al compartir. Inténtalo de nuevo.');
+}
+
+function showMessage(message) {
+    hideLoading();
+    alert(message);
 }
 
 // Agregar event listener al botón de compartir
@@ -491,3 +584,18 @@ document.addEventListener('DOMContentLoaded', () => {
         shareButton.addEventListener('click', captureAndShare);
     }
 });
+
+// Añadir script para html2canvas (alternativa de captura)
+function loadHtml2Canvas() {
+    if (typeof html2canvas === 'undefined') {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+        script.integrity = 'sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
+        script.crossOrigin = 'anonymous';
+        script.referrerPolicy = 'no-referrer';
+        document.head.appendChild(script);
+    }
+}
+
+// Cargar html2canvas al iniciar
+document.addEventListener('DOMContentLoaded', loadHtml2Canvas);
