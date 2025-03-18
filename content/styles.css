@@ -640,3 +640,16 @@ footer {
     color: var(--dark-text);
     font-style: italic;
 }
+
+.goback{
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.goback:hover {
+    text-decoration: underline;
+
+}
