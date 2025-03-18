@@ -11,6 +11,8 @@
     --frame-color: #8B4513;
     --text-secondary: #555;
     --transition-standard: all 0.3s ease;
+    --danger-color: #f44336;
+    --danger-hover: #d32f2f;
 }
 
 /* Reset and base styles */
@@ -378,18 +380,17 @@ footer {
     color: #777;
 }
 
-/* Logout Button */
+/* Logout Button - Responsive Improvements */
 #logout-button {
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 100;
-    background-color: #f44336;
+    background-color: var(--danger-color);
     color: white;
     padding: 0.5rem 1rem;
     font-size: 0.9rem;
     border-radius: 4px;
-    opacity: 1;
     transition: var(--transition-standard);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     font-weight: bold;
@@ -397,10 +398,13 @@ footer {
     cursor: pointer;
     text-transform: uppercase;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #logout-button:hover {
-    background-color: #d32f2f;
+    background-color: var(--danger-hover);
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
@@ -452,6 +456,14 @@ footer {
     .controls {
         justify-content: center;
     }
+    
+    /* Logout button responsive adjustments */
+    #logout-button {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.8rem;
+        right: 15px;
+        top: 15px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -466,5 +478,32 @@ footer {
     #track-info {
         width: 95%;
         border-width: 5px;
+    }
+    
+    /* Smaller screens logout button */
+    #logout-button {
+        padding: 0.5rem 0.7rem;
+        font-size: 0.5rem;
+        right: 10px;
+        top: 10px;
+        border-radius: 3px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+}
+
+/* For very small screens */
+@media (max-width: 360px) {
+    #logout-button {
+        padding: 0.2rem 0.5rem;
+        font-size: 0.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .container {
+        padding: 0.7rem;
+    }
+    
+    header h1 {
+        font-size: 1.8rem;
     }
 }
