@@ -39,7 +39,7 @@ function resizeCanvas() {
     
     if (trackData.length > 0) {
         // Reposition particles when canvas is resized
-        repositionParticles();
+        createParticles(); // Recreate particles to ensure proper positioning
     }
 }
 
@@ -51,8 +51,8 @@ function generateArtwork(tracks) {
     // Create particles from tracks
     createParticles();
     
-    // Start animation loop
-    animate();
+    // Draw static layout (no animation)
+    drawStaticLayout();
     
     // Preload images for better performance
     preloadImages(tracks);
@@ -68,46 +68,72 @@ function preloadImages(tracks) {
     tracks.forEach(track => {
         const img = new Image();
         img.src = track.album.images[0].url;
+        img.onload = () => {
+            // Redraw once images are loaded
+            drawStaticLayout();
+        };
     });
 }
 
-// Create particles from track data
+// Create particles from track data - using a grid-like layout
 function createParticles() {
     particles = [];
     
-    trackData.forEach((track, index) => {
-        // Create image from album cover
-        const img = new Image();
-        img.src = track.album.images[0].url;
-        
-        // Position calculation - distribute across museum wall
-        // Use golden ratio layout to avoid perfect grid and look more like art gallery
-        const phi = 1.618033988749895;
-        const angle = index * phi * Math.PI * 2;
-        const radius = Math.min(canvas.width, canvas.height) * 0.4 * Math.sqrt(index / trackData.length);
-        
-        // Randomize positions a bit for organic layout
-        const randomX = (Math.random() - 0.5) * 100;
-        const randomY = (Math.random() - 0.5) * 100;
-        
-        // Create particle with track data and frame properties
-        particles.push({
-            x: canvas.width / 2 + Math.cos(angle) * radius + randomX,
-            y: canvas.height / 2 + Math.sin(angle) * radius + randomY,
-            size: 40 + Math.random() * 30, // Size of the cover
-            frameSize: 0, // Frame size padding, will be calculated during drawing
-            speedX: (Math.random() - 0.5) * 0.2, // Slower movement for museum feel
-            speedY: (Math.random() - 0.5) * 0.2,
-            img: img,
-            track: track,
-            opacity: 0.9 + Math.random() * 0.1, // More solid for framed artwork
-            rotation: (Math.random() - 0.5) * 0.2, // Slight tilt for artistic arrangement
-            rotationSpeed: (Math.random() - 0.5) * 0.002, // Very slow rotation
-            frameColor: getRandomFrameColor(), // Random classic frame color
-            frameStyle: Math.floor(Math.random() * 4), // Different frame styles
-            shadow: 5 + Math.random() * 15 // Shadow depth
-        });
-    });
+    // Calculate grid dimensions based on number of tracks
+    const itemCount = trackData.length;
+    const aspectRatio = canvas.width / canvas.height;
+    
+    // Calculate rows and columns for grid
+    let cols = Math.ceil(Math.sqrt(itemCount * aspectRatio));
+    let rows = Math.ceil(itemCount / cols);
+    
+    // Ensure we have enough cells
+    while (rows * cols < itemCount) {
+        cols++;
+    }
+    
+    // Calculate cell size with more space
+    const cellWidth = canvas.width / cols;
+    const cellHeight = canvas.height / rows;
+    const padding = Math.min(cellWidth, cellHeight) * 0.2; // 20% padding
+    
+    // Determine optimal frame size
+    const frameSize = Math.min(cellWidth, cellHeight) * 0.7; // 70% of cell size
+    
+    // Create particles in grid pattern
+    let index = 0;
+    for (let r = 0; r < rows && index < trackData.length; r++) {
+        for (let c = 0; c < cols && index < trackData.length; c++) {
+            // Create image from album cover
+            const img = new Image();
+            img.src = trackData[index].album.images[0].url;
+            
+            // Position calculation - distribute in grid with offset for visual interest
+            const offsetX = (Math.random() - 0.5) * padding;
+            const offsetY = (Math.random() - 0.5) * padding;
+            
+            // Calculate position
+            const x = c * cellWidth + cellWidth / 2 + offsetX;
+            const y = r * cellHeight + cellHeight / 2 + offsetY;
+            
+            // Create particle with track data and frame properties
+            particles.push({
+                x: x,
+                y: y,
+                size: frameSize, // Size of the cover
+                frameSize: frameSize * 0.15, // Frame size padding
+                img: img,
+                track: trackData[index],
+                opacity: 1, // Full opacity
+                rotation: (Math.random() - 0.5) * 0.1, // Very slight tilt for artistic arrangement
+                frameColor: getRandomFrameColor(), // Random classic frame color
+                frameStyle: Math.floor(Math.random() * 4), // Different frame styles
+                shadow: 5 + Math.random() * 10 // Shadow depth
+            });
+            
+            index++;
+        }
+    }
 }
 
 // Get random classic frame colors
@@ -127,55 +153,17 @@ function getRandomFrameColor() {
     return frameColors[Math.floor(Math.random() * frameColors.length)];
 }
 
-// Reposition particles when canvas is resized
-function repositionParticles() {
-    particles.forEach((particle, index) => {
-        const phi = 1.618033988749895;
-        const angle = index * phi * Math.PI * 2;
-        const radius = Math.min(canvas.width, canvas.height) * 0.4 * Math.sqrt(index / particles.length);
-        
-        const randomX = (Math.random() - 0.5) * 100;
-        const randomY = (Math.random() - 0.5) * 100;
-        
-        particle.x = canvas.width / 2 + Math.cos(angle) * radius + randomX;
-        particle.y = canvas.height / 2 + Math.sin(angle) * radius + randomY;
-    });
-}
-
-// Animation loop
-function animate() {
-    // Semi-transparent clearing for motion trails
-    ctx.fillStyle = 'rgba(245, 245, 240, 0.1)';
+// Draw static layout (no animation)
+function drawStaticLayout() {
+    // Clear canvas
+    ctx.fillStyle = 'rgba(245, 245, 240, 1)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Update and draw particles
-    updateParticles();
-    
-    // Continue animation
-    animationId = requestAnimationFrame(animate);
-}
-
-// Update particle positions and draw them
-function updateParticles() {
     // Sort particles by y position to create proper depth
     particles.sort((a, b) => a.y - b.y);
     
     // Draw particles
     particles.forEach(particle => {
-        // Move particle very gently, like floating paintings
-        particle.x += particle.speedX;
-        particle.y += particle.speedY;
-        particle.rotation += particle.rotationSpeed;
-        
-        // Bounce off edges with damping
-        if (particle.x <= particle.size || particle.x >= canvas.width - particle.size) {
-            particle.speedX *= -0.9;
-        }
-        if (particle.y <= particle.size || particle.y >= canvas.height - particle.size) {
-            particle.speedY *= -0.9;
-        }
-        
-        // Draw particle with frame
         drawFramedParticle(particle);
     });
 }
@@ -193,7 +181,7 @@ function drawFramedParticle(particle) {
     const size = isHovered ? particle.size * 1.1 : particle.size;
     
     // Calculate frame dimensions
-    const frameWidth = size * 0.15; // Frame thickness
+    const frameWidth = particle.frameSize; // Frame thickness
     const frameOuterWidth = size + frameWidth * 2;
     const frameOuterHeight = frameOuterWidth;
     
@@ -364,6 +352,7 @@ function handleMouseMove(e) {
     const mouseY = e.clientY - rect.top;
     
     // Find particle under cursor
+    const previousHoveredParticle = hoveredParticle;
     hoveredParticle = null;
     canvas.style.cursor = 'default';
     
@@ -378,6 +367,11 @@ function handleMouseMove(e) {
             canvas.style.cursor = 'pointer';
             break;
         }
+    }
+    
+    // Only redraw if hover state changed
+    if (previousHoveredParticle !== hoveredParticle) {
+        drawStaticLayout();
     }
 }
 
